@@ -1,7 +1,14 @@
 const db = require("./db/connection");
 const inquirer = require("inquirer");
 const consTable = require("console.table");
-const { getAllDepartments } = require("./utils/prompts");
+const {
+  getAllDepartments,
+  getAllRoles,
+  getAllEmployees,
+  addDepartment,
+  addRole,
+  addEmployee,
+} = require("./utils/prompts");
 
 async function promptUser() {
   inquirer
@@ -10,19 +17,39 @@ async function promptUser() {
       message: "What would you like to do?",
       name: "init",
       choices: [
-        "View all departments",
-        "View all roles",
-        "View all employees",
-        "Add a department",
-        "Add a role",
-        "Add an employee",
-        "And update an employee role",
+        "View All Departments",
+        "Add Department",
+        "View All Roles",
+        "Add Role",
+        "View All Employees",
+        "Add Employee",
+        "Update Employee Role",
       ],
     })
     .then(async (answer) => {
       switch (answer.init) {
-        case "View all departments":
+        case "View All Departments":
           await getAllDepartments();
+          promptUser();
+          break;
+        case "View All Roles":
+          await getAllRoles();
+          promptUser();
+          break;
+        case "View All Employees":
+          await getAllEmployees();
+          promptUser();
+          break;
+        case "Add Department":
+          await addDepartment();
+          promptUser();
+          break;
+        case "Add Role":
+          await addRole();
+          promptUser();
+          break;
+        case "Add Employee":
+          await addEmployee();
           promptUser();
           break;
         default:
