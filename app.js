@@ -8,6 +8,7 @@ const {
   addDepartment,
   addRole,
   addEmployee,
+  updateEmployeeRole,
 } = require("./utils/prompts");
 
 async function promptUser() {
@@ -50,6 +51,10 @@ async function promptUser() {
           break;
         case "Add Employee":
           await addEmployee();
+          promptUser();
+          break;
+        case "Update Employee Role":
+          await updateEmployeeRole();
           promptUser();
           break;
         default:

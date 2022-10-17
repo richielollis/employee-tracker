@@ -4,6 +4,7 @@ const inquirer = require("inquirer");
 let departmentArray = [];
 let roleArray = [];
 let employeeArray = [];
+let managerArray = [];
 
 async function departmentList() {
   departmentArray = [];
@@ -39,7 +40,7 @@ async function roleList() {
     .catch(console.log);
 }
 
-async function employeeList() {
+async function managerList() {
   const sql = `SELECT CONCAT (first_name, ' ', last_name) AS full_name, employee.id, manager_id FROM employee`;
   await db
     .promise()
@@ -49,8 +50,22 @@ async function employeeList() {
         if (rows[i].manager_id === null) {
           let id = rows[i].id;
           let fullName = rows[i].full_name;
-          employeeArray.push(`${id}. ${fullName}`);
+          managerArray.push(`${id}. ${fullName}`);
         }
+      }
+    });
+}
+
+async function employeeList() {
+  const sql = `SELECT CONCAT (first_name, ' ', last_name) AS full_name, employee.id, manager_id FROM employee`;
+  await db
+    .promise()
+    .query(sql)
+    .then(([rows]) => {
+      for (let i = 0; i < rows.length; i++) {
+        let id = rows[i].id;
+        let fullName = rows[i].full_name;
+        employeeArray.push(`${id}. ${fullName}`);
       }
     });
 }
@@ -125,7 +140,7 @@ async function addDepartment(department) {
 }
 
 async function addRole(role) {
-  departmentList();
+  await departmentList();
   await inquirer
     .prompt([
       {
@@ -162,8 +177,8 @@ async function addRole(role) {
 }
 
 async function addEmployee() {
-  employeeList();
-  roleList();
+  await managerList();
+  await roleList();
   await inquirer
     .prompt([
       {
@@ -186,7 +201,7 @@ async function addEmployee() {
         type: "list",
         message: "Who is the employee's manager?",
         name: "manager",
-        choices: employeeArray,
+        choices: managerArray,
       },
     ])
     .then(async (answers) => {
@@ -207,6 +222,43 @@ async function addEmployee() {
     });
 }
 
+async function updateEmployeeRole() {
+  await employeeList();
+  await roleList();
+  await inquirer
+    .prompt([
+      {
+        type: "list",
+        message: "Which employee's role would you like to update?",
+        name: "employee",
+        choices: employeeArray,
+      },
+      {
+        type: "list",
+        message: "Which role do you want to assign the selected employee?",
+        name: "role",
+        choices: roleArray,
+      },
+    ])
+    .then(async (answers) => {
+      const val1 = answers.employee.split(".");
+      const employee = val1[0];
+      const val2 = answers.role.split(".");
+      const role = val2[0];
+
+      const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+      const params = [role, employee];
+
+      await db
+        .promise()
+        .query(sql, params)
+        .then(([rows]) => {
+          console.log("Employee Updated");
+        })
+        .catch(console.log);
+    });
+}
+
 module.exports = {
   getAllDepartments,
   getAllRoles,
@@ -214,4 +266,5 @@ module.exports = {
   addDepartment,
   addRole,
   addEmployee,
+  updateEmployeeRole,
 };
