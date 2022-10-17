@@ -1,11 +1,14 @@
 const db = require("../db/connection");
 const inquirer = require("inquirer");
 
+// empty arrays for lists
 let departmentArray = [];
 let roleArray = [];
 let employeeArray = [];
 let managerArray = [];
 
+// functions that create the arrays needed for the functions that will take in user input in command line
+// departments, roles, employee's, and manager's are put into their respected arrays for use later
 async function departmentList() {
   departmentArray = [];
   const sql = `SELECT * FROM department`;
@@ -70,6 +73,7 @@ async function employeeList() {
     });
 }
 
+// functions needed to talk to mysql and present user with proper information that they ask for
 async function getAllDepartments() {
   const sql = `SELECT * FROM department`;
 
@@ -259,6 +263,7 @@ async function updateEmployeeRole() {
     });
 }
 
+// exporting functions to be called in app.js
 module.exports = {
   getAllDepartments,
   getAllRoles,

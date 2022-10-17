@@ -11,6 +11,8 @@ const {
   updateEmployeeRole,
 } = require("./utils/prompts");
 
+// function that will prompt user with initial questions and then switch case to call the
+// correct function from prompt.js to get the information the user has asked for
 async function promptUser() {
   inquirer
     .prompt({
